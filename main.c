@@ -44,7 +44,6 @@ void dirContent(const char *rootpath){
 
     }
     
-
   
 
 }

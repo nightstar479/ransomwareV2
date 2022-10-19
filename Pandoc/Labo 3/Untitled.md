@@ -4,7 +4,7 @@
 title: "IR209 - Développement"
 subtitle: "Rapport de Laboratoire 3: Parcours récursif (suite & fin), Gestion des arguments & Allocation dynamique"
 author: [Maljean Thimothé, Tasiaux Victor]
-date: "05-10-2022"
+date: "19-10-2022"
 geometry: "left=2.5cm,right=2.5cm,top=2cm,bottom=2cm"
 pdf_document: null
 titlepage: true
@@ -59,6 +59,8 @@ void dirContent(const charrootpath){
 }
 ```
 Ce code avait déjà été validé au cours précédent, il reste à créer un parcours de dossier récursif.
+
+\newpage
 
 # Gestion des arguments
 
@@ -168,7 +170,7 @@ void dirContent(const char *rootpath){
 ```
 Dans cette version on ajoute un contrôle du nombre d'arguments grâce à `argc`.
 
-
+\newpage
 
 # Allocation dynamique du Path
 
@@ -236,7 +238,7 @@ void dirContent(const char *rootpath){
     }
 }
 ```
-Dans cette version, on utilise un tableau à taille fixe et strncat pour créer le nouveau répertoire.
+Dans cette version, on utilise un tableau à taille fixe et `strncat`, version sécurisée de `strcat` pour créer le nouveau répertoire.
 
 On vérifie que le fichier est un dossier et qu'il n'est pas le dossier courant(`.`) ou le dossier parent (`..`).
 
@@ -310,4 +312,5 @@ void dirContent(const char *rootpath){
 On emploie ici la fonction `malloc` pour créer un tableau de taille variable.
 
 On alloue de la mémoire pour le nouveau chemin 
-&rarr; c'est la longueur du rootpath + du d_name + 2. 2 correspond au "/" + le \0 qui marque la fin du tableau. Comme malloc est à la base un void, on caste le malloc en tableau de char.
+&rarr; c'est la longueur du `rootpath` + du `d_name` + `2`. 
+Le 2 correspond au "`/`" + le `\0` qui marque la fin du tableau. Comme `malloc` est à la base un `void`, on caste le malloc en tableau de char.

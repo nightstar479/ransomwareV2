@@ -1,11 +1,12 @@
+
 #include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+
 
 void dirContent(const char *rootpath);
-bool doUseFile(const char *filename);
+
 
 int main(int argc, char* argv[]){
     if(argc == 2){
@@ -55,28 +56,13 @@ void dirContent(const char *rootpath){
 
         else{
             if( sd -> d_type == DT_REG){
-
-                if(doUseFile(sd -> d_name) == true){
-                    printf("Nom du fichier: %s\n",sd->d_name);
-                }
-                else{
-                    printf("Fichier ignoré:%s\n",sd->d_name);
-                }
-
+                printf("Nom du fichier: %s\n",sd->d_name);
             }
         }
        sd = readdir(d);
     }
-}
+    
 
-bool doUseFile(const char *filename){
-// if the file is a video file, return false else return true
-    if(strstr(filename,".mp4") != NULL || strstr(filename,".avi") != NULL || strstr(filename,".mkv") != NULL || strstr(filename,".mov") != NULL || strstr(filename,".flv") != NULL || strstr(filename,".wmv") != NULL || strstr(filename,".mpg") != NULL || strstr(filename,".mpeg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".webm") != NULL || strstr(filename,".vob") != NULL || strstr(filename,".ogv") != NULL || strstr(filename,".ogg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".m4a") != NULL || strstr(filename,".3gp") != NULL || strstr(filename,".3g2") != NULL || strstr(filename,".mxf") != NULL || strstr(filename,".roq") != NULL || strstr(filename,".nsv") != NULL || strstr(filename,".f4v") != NULL || strstr(filename,".f4p") != NULL || strstr(filename,".f4a") != NULL || strstr(filename,".f4b") != NULL){
-        return false;
-    }
-    else{
-        
-        return true;
-    }
-}
+  
 
+}

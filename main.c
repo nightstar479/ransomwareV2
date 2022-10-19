@@ -37,13 +37,14 @@ void dirContent(const char *rootpath){
         }
 
         else{
-            if(sd -> d_type == DT_REG){
+            if( sd -> d_type == DT_REG){
                 printf("Nom du fichier: %s",sd->d_name);
             }
         }
-
+        sd = readdir(d);
     }
     
+
   
 
 }

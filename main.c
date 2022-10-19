@@ -14,11 +14,13 @@ int main(int argc, char* argv[]){
     else{
 
         if(argc > 2){
-        puts("ERROR: too many arguments");
+            puts("ERROR: too many arguments");
+            return 0;
         }
 
         else {
             puts("ERROR: too few arguments");
+            return 0;
         }
     }
 
@@ -27,29 +29,30 @@ int main(int argc, char* argv[]){
 
 
 void dirContent(const char *rootpath){
-    puts(rootpath);
     DIR *d = opendir(rootpath);
-    struct dirent *sd = readdir(d);
 
     if (d == NULL){
         perror("ERROR: ");
     }
+    struct dirent *sd = readdir(d);
 
-    while (sd != NULL){
 
-        if(sd -> d_type == DT_DIR){
-        /*    char *rp,*newPath;
-            rp = malloc(sizeof (char) * BUFSIZ);
-            newPath = malloc(sizeof (char) * BUFSIZ);
-            strcpy(rp,d);
-            strcpy(newPath,sd->d_name);
-            strcat(newPath,d);
-            dirContent(newPath);*/
+
+    while (sd!= NULL){
+
+        if(sd -> d_type == DT_DIR && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){
+            char new_path[4096] = "";
+            strncat(new_path,rootpath,strlen(rootpath));
+            strncat(new_path,"/",1);
+            strncat(new_path,sd ->d_name,strlen(sd->d_name));
+            printf("Path:%s\n",new_path);
+
+            dirContent(new_path);
         }
 
         else{
             if( sd -> d_type == DT_REG){
-                printf("Nom du fichier: %s",sd->d_name);
+                printf("Nom du fichier: %s\n",sd->d_name);
             }
         }
        sd = readdir(d);

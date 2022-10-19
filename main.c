@@ -8,8 +8,19 @@ void dirContent(const char *rootpath);
 
 
 int main(int argc, char* argv[]){
+    if(argc == 2){
+        dirContent(argv[1]);
+    }
+    else{
 
-    dirContent(argv[1]);
+        if(argc > 2){
+        puts("ERROR: too many arguments");
+        }
+
+        else {
+            puts("ERROR: too few arguments");
+        }
+    }
 
     return 0;
 }
@@ -41,7 +52,7 @@ void dirContent(const char *rootpath){
                 printf("Nom du fichier: %s",sd->d_name);
             }
         }
-        sd = readdir(d);
+       sd = readdir(d);
     }
     
 

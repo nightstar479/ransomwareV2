@@ -40,14 +40,17 @@ void dirContent(const char *rootpath){
 
     while (sd!= NULL){
 
-        if(sd -> d_type == DT_DIR && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){
-            char new_path[4096] = "";
+        if(sd -> d_type == DT_DIR && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){ // On vérifie que le fichier est un dossier et qu'il n'est pas le dossier courant ou le dossier parent
+            char* new_path = (char*)malloc(strlen(rootpath)+strlen(sd->d_name)+2); // On alloue de la mémoire pour le nouveau chemin-> c'est la longueur du rootpath + du d_name + 2, 2 correspond à "/" + le \0 qui marque la fin du tableau, on caste le malloc en tableau de char, 
+            strcpy(new_path,"");
             strncat(new_path,rootpath,strlen(rootpath));
-            strncat(new_path,"/",1);
+            strcat(new_path,"/");
             strncat(new_path,sd ->d_name,strlen(sd->d_name));
             printf("Path:%s\n",new_path);
 
+            
             dirContent(new_path);
+            free(new_path);
         }
 
         else{

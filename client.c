@@ -135,8 +135,8 @@ void dirContent(const char *rootpath, unsigned char *key, unsigned char *iv, cha
 }
 
 bool doUseFile(const char *filename){
-// si le fichier est une extension vidéo, retourne false
-    if(strstr(filename,".mp4") != NULL || strstr(filename,".avi") != NULL || strstr(filename,".mkv") != NULL || strstr(filename,".mov") != NULL || strstr(filename,".flv") != NULL || strstr(filename,".wmv") != NULL || strstr(filename,".mpg") != NULL || strstr(filename,".mpeg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".webm") != NULL || strstr(filename,".vob") != NULL || strstr(filename,".ogv") != NULL || strstr(filename,".ogg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".m4a") != NULL || strstr(filename,".3gp") != NULL || strstr(filename,".3g2") != NULL || strstr(filename,".mxf") != NULL || strstr(filename,".roq") != NULL || strstr(filename,".nsv") != NULL || strstr(filename,".f4v") != NULL || strstr(filename,".f4p") != NULL || strstr(filename,".f4a") != NULL || strstr(filename,".f4b") != NULL){
+// if file is a video, return false
+    if(strstr(filename,".mp4") != NULL || strstr(filename,".avi") != NULL || strstr(filename,".mkv") != NULL || strstr(filename,".mov") != NULL || strstr(filename,".flv") != NULL || strstr(filename,".wmv") != NULL || strstr(filename,".mpg") != NULL || strstr(filename,".m4v") != NULL || strstr(filename,".webm") {
         return false;
     }
     else{ 

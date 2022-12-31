@@ -13,7 +13,7 @@ void handle_error(){
 }
 
 int main(){
-    // create a socket
+
     int sockid = socket(AF_INET, SOCK_STREAM, 0);
     int server_port= 9999;
     char *server_ip = "127.0.0.1";
@@ -54,8 +54,6 @@ int main(){
             client_socket,
             inet_ntoa(client_addr.sin_addr),
             ntohs(client_addr.sin_port));
-        
-        // receive key and iv from client and store it in binary files
         n = recv(client_socket,(char *)buffer, BUFFER_SIZE, 0);
         FILE *key_file = fopen("key.bin", "wb");
         fwrite(buffer, 1, n, key_file);

@@ -18,7 +18,8 @@ Start by editing the `server_ip` variable (line 314 in `client.c` and line 19 in
 ### Scripted method
 ```bash
 Scripts/compile.sh client && Scripts/compile.sh server
-```bash
+```
+
 ### Manual method
 
 ```bash

@@ -16,8 +16,9 @@ Start by editing the `server_ip` variable (line 314 in `client.c` and line 19 in
 ## Compiling
 
 ### Scripted method
-Scripts/compile.sh
-
+```bash
+Scripts/compile.sh client && Scripts/compile.sh server
+```bash
 ### Manual method
 
 ```bash
